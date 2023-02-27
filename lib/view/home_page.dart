@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'image_widget.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -14,7 +16,18 @@ class HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Image Picker App'),
       ),
-      body: Container(),
+      body: ListView(
+        children: [
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: ((context) => const ImageWidget())));
+              },
+              child: const Text('Pick the image'))
+        ],
+      ),
     );
   }
 }
