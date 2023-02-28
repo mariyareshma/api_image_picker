@@ -1,6 +1,5 @@
 import 'package:api_image_picker/model/image_model.dart';
 import 'package:api_image_picker/service/service.dart';
-
 import 'package:easy_search_bar/easy_search_bar.dart';
 import 'package:flutter/material.dart';
 
@@ -13,29 +12,13 @@ class ImageWidget extends StatefulWidget {
 }
 
 class HomePageState extends State<ImageWidget> {
-  List<ImagesResult> filteredList = <ImagesResult>[];
   List<ImagesResult> originalList = <ImagesResult>[];
+  String? selectedImage;
 
   var searchImage = '';
 
-  Future getDataFromPath() async {
-    originalList = await readJson();
-  }
-
-  Future<List<ImagesResult>> filterResults() async {
-    await getDataFromPath();
-
-    filteredList = originalList
-        .where((element) => element.thumbnail!.contains(searchImage))
-        .toList();
-
-    return filteredList;
-  }
-
   @override
   void initState() {
-    filteredList.clear();
-    filteredList.addAll(originalList);
     super.initState();
   }
 
@@ -46,11 +29,10 @@ class HomePageState extends State<ImageWidget> {
         title: const Text('To Pick the image'),
         suggestionTextStyle:
             const TextStyle(fontWeight: FontWeight.normal, fontSize: 20),
-        suggestions: ['apple', 'orange', 'graphs'],
+        suggestions: const ['apple', 'orange', 'graphs'],
         onSearch: (value) async {
           searchImage = value;
 
-          filterResults();
           setState(() {});
         },
       ),
@@ -61,9 +43,9 @@ class HomePageState extends State<ImageWidget> {
           children: [
             ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context, () {
-                    setState(() {});
-                  });
+                  if (selectedImage != null) {
+                    Navigator.pop(context, selectedImage);
+                  }
                 },
                 child: const Text('Ok')),
             ElevatedButton(
@@ -78,23 +60,43 @@ class HomePageState extends State<ImageWidget> {
   }
 
   Widget getBody() {
-    return GridView.count(
-      crossAxisCount: 2,
-      mainAxisSpacing: 5.0,
-      childAspectRatio: 1.0,
-      children: getImageWidgets(filteredList),
-    );
+    return FutureBuilder(
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return GridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 5.0,
+              crossAxisSpacing: 10.0,
+              children: getImageWidgets(snapshot.data!),
+            );
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        future: readJson());
   }
 
   List<Widget> getImageWidgets(List<ImagesResult> images) {
-    return images
-        .map(
-          (e) => Expanded(
-            child: GestureDetector(
-              child: Image.network(e.thumbnail!),
-            ),
-          ),
-        )
-        .toList();
+    return images.map((e) {
+      if (selectedImage == e.thumbnail) {
+        return Container(
+          decoration: BoxDecoration(
+              border:
+                  Border.all(color: Theme.of(context).primaryColor, width: 5)),
+          child: Image.network(e.thumbnail!),
+        );
+      } else {
+        return GestureDetector(
+          child: Image.network(e.thumbnail!),
+          onTap: () {
+            setState(() {
+              selectedImage = e.thumbnail;
+            });
+          },
+        );
+      }
+    }).toList();
   }
 }
