@@ -1,24 +1,18 @@
-class ImagePicker {
-  ImagePicker({
+class ImageSearchResult {
+  ImageSearchResult({
     required this.searchMetadata,
     required this.searchParameters,
     required this.searchInformation,
-    required this.shoppingResults,
-    required this.suggestedSearches,
     required this.imagesResults,
-    required this.relatedSearches,
   });
 
   final SearchMetadata? searchMetadata;
   final SearchParameters? searchParameters;
   final SearchInformation? searchInformation;
-  final List<ShoppingResult> shoppingResults;
-  final List<SuggestedSearch> suggestedSearches;
   final List<ImagesResult> imagesResults;
-  final List<RelatedSearch> relatedSearches;
 
-  factory ImagePicker.fromJson(Map<String, dynamic> json) {
-    return ImagePicker(
+  factory ImageSearchResult.fromJson(Map<String, dynamic> json) {
+    return ImageSearchResult(
       searchMetadata: json["search_metadata"] == null
           ? null
           : SearchMetadata.fromJson(json["search_metadata"]),
@@ -28,22 +22,10 @@ class ImagePicker {
       searchInformation: json["search_information"] == null
           ? null
           : SearchInformation.fromJson(json["search_information"]),
-      shoppingResults: json["shopping_results"] == null
-          ? []
-          : List<ShoppingResult>.from(
-              json["shopping_results"]!.map((x) => ShoppingResult.fromJson(x))),
-      suggestedSearches: json["suggested_searches"] == null
-          ? []
-          : List<SuggestedSearch>.from(json["suggested_searches"]!
-              .map((x) => SuggestedSearch.fromJson(x))),
       imagesResults: json["images_results"] == null
           ? []
           : List<ImagesResult>.from(
               json["images_results"]!.map((x) => ImagesResult.fromJson(x))),
-      relatedSearches: json["related_searches"] == null
-          ? []
-          : List<RelatedSearch>.from(
-              json["related_searches"]!.map((x) => RelatedSearch.fromJson(x))),
     );
   }
 }
@@ -51,70 +33,33 @@ class ImagePicker {
 class ImagesResult {
   ImagesResult({
     required this.position,
-    required this.thumbnail,
-    required this.source,
-    required this.title,
-    required this.link,
     required this.original,
     required this.originalWidth,
     required this.originalHeight,
-    required this.isProduct,
-    required this.inStock,
-    required this.tag,
+    required this.source,
+    required this.title,
+    required this.link,
+    required this.thumbnail,
   });
 
   final int? position;
-  final String? thumbnail;
-  final String? source;
-  final String? title;
-  final String? link;
   final String? original;
   final int? originalWidth;
   final int? originalHeight;
-  final bool? isProduct;
-  final bool? inStock;
-  final String? tag;
+  final String? source;
+  final String? title;
+  final String? link;
+  final String? thumbnail;
 
   factory ImagesResult.fromJson(Map<String, dynamic> json) {
     return ImagesResult(
       position: json["position"],
-      thumbnail: json["thumbnail"],
-      source: json["source"],
-      title: json["title"],
-      link: json["link"],
       original: json["original"],
       originalWidth: json["original_width"],
       originalHeight: json["original_height"],
-      isProduct: json["is_product"],
-      inStock: json["in_stock"],
-      tag: json["tag"],
-    );
-  }
-}
-
-class RelatedSearch {
-  RelatedSearch({
-    required this.link,
-    required this.serpapiLink,
-    required this.query,
-    required this.highlightedWords,
-    required this.thumbnail,
-  });
-
-  final String? link;
-  final String? serpapiLink;
-  final String? query;
-  final List<String> highlightedWords;
-  final String? thumbnail;
-
-  factory RelatedSearch.fromJson(Map<String, dynamic> json) {
-    return RelatedSearch(
+      source: json["source"],
+      title: json["title"],
       link: json["link"],
-      serpapiLink: json["serpapi_link"],
-      query: json["query"],
-      highlightedWords: json["highlighted_words"] == null
-          ? []
-          : List<String>.from(json["highlighted_words"]!.map((x) => x)),
       thumbnail: json["thumbnail"],
     );
   }
@@ -123,45 +68,13 @@ class RelatedSearch {
 class SearchInformation {
   SearchInformation({
     required this.imageResultsState,
-    required this.queryDisplayed,
-    required this.menuItems,
   });
 
   final String? imageResultsState;
-  final String? queryDisplayed;
-  final List<MenuItem> menuItems;
 
   factory SearchInformation.fromJson(Map<String, dynamic> json) {
     return SearchInformation(
       imageResultsState: json["image_results_state"],
-      queryDisplayed: json["query_displayed"],
-      menuItems: json["menu_items"] == null
-          ? []
-          : List<MenuItem>.from(
-              json["menu_items"]!.map((x) => MenuItem.fromJson(x))),
-    );
-  }
-}
-
-class MenuItem {
-  MenuItem({
-    required this.position,
-    required this.title,
-    required this.link,
-    required this.serpapiLink,
-  });
-
-  final int? position;
-  final String? title;
-  final String? link;
-  final String? serpapiLink;
-
-  factory MenuItem.fromJson(Map<String, dynamic> json) {
-    return MenuItem(
-      position: json["position"],
-      title: json["title"],
-      link: json["link"],
-      serpapiLink: json["serpapi_link"],
     );
   }
 }
@@ -226,67 +139,6 @@ class SearchParameters {
       ijn: json["ijn"],
       device: json["device"],
       tbm: json["tbm"],
-    );
-  }
-}
-
-class ShoppingResult {
-  ShoppingResult({
-    required this.position,
-    required this.title,
-    required this.price,
-    required this.extractedPrice,
-    required this.link,
-    required this.source,
-    required this.shipping,
-    required this.thumbnail,
-  });
-
-  final int? position;
-  final String? title;
-  final String? price;
-  final int? extractedPrice;
-  final String? link;
-  final String? source;
-  final String? shipping;
-  final String? thumbnail;
-
-  factory ShoppingResult.fromJson(Map<String, dynamic> json) {
-    return ShoppingResult(
-      position: json["position"],
-      title: json["title"],
-      price: json["price"],
-      extractedPrice: json["extracted_price"],
-      link: json["link"],
-      source: json["source"],
-      shipping: json["shipping"],
-      thumbnail: json["thumbnail"],
-    );
-  }
-}
-
-class SuggestedSearch {
-  SuggestedSearch({
-    required this.name,
-    required this.link,
-    required this.chips,
-    required this.serpapiLink,
-    required this.thumbnail,
-  });
-
-  final String? name;
-  final String? link;
-  final String? chips;
-  final String? serpapiLink;
-  final String? thumbnail;
-
-  factory SuggestedSearch.fromJson(Map<String, dynamic> json) {
-    return SuggestedSearch(
-      name: json["name"],
-      link: json["link"],
-      chips: json["chips"],
-      serpapiLink: json["serpapi_link"],
-      thumbnail: json["thumbnail"],
     );
   }
 }

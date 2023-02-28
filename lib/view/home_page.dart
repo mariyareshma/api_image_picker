@@ -13,19 +13,24 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Image Picker App'),
-      ),
+      appBar: AppBar(title: const Text('Image Picker App')),
       body: ListView(
         children: [
-          ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: ((context) => const ImageWidget())));
-              },
-              child: const Text('Pick the image'))
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => const ImageWidget())));
+                  },
+                  child: const Text('Pick the image')),
+            ],
+          ),
         ],
       ),
     );
