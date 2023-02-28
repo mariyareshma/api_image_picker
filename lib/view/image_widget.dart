@@ -55,6 +55,25 @@ class HomePageState extends State<ImageWidget> {
         },
       ),
       body: getBody(),
+      persistentFooterButtons: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, () {
+                    setState(() {});
+                  });
+                },
+                child: const Text('Ok')),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancel'))
+          ],
+        )
+      ],
     );
   }
 
