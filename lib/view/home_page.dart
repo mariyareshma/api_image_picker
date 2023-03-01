@@ -15,29 +15,37 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Image Picker App')),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          imageUrl != null
-              ? Image.network(imageUrl!)
-              : Image.asset('assets/picture.png'),
-          ElevatedButton(
-              onPressed: () async {
-                var result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: ((context) => const ImageWidget())));
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  child: imageUrl != null
+                      ? Image.network(imageUrl!)
+                      : Image.asset('assets/picture.png'),
+                  onTap: () async {
+                    var result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => const ImageWidget())));
 
-                if (result != null) {
-                  setState(() {
-                    imageUrl = result;
-                  });
-                }
-              },
-              child: const Text('Pick the image')),
-        ],
+                    if (result != null) {
+                      setState(() {
+                        imageUrl = result;
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

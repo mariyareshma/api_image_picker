@@ -1,15 +1,17 @@
-import 'dart:convert';
+import 'package:api_image_picker/model/image_model.dart';
+import 'package:dio/dio.dart';
 
-import 'package:flutter/services.dart';
+var dio = Dio();
 
-import '../model/image_model.dart';
+Future<List<ImagesResult>> getImageSearchResult(String searchTerm) async {
+  var response = await dio.get(
+      'https://serpapi.com/search.json?q=$searchTerm&tbm=isch&ijn=1&api_key=91ec17869c30990778bad8b03998b04340d6b00bd9b014ab780ba0fc09e42367');
 
-Future<List<ImagesResult>> readJson() async {
-  final String response = await rootBundle.loadString('assets/image.json');
-  final jsonObj = await json.decode(response);
+  if (response.statusCode == 200) {
+    var imageJsons = response.data;
+    var imageArticleObj = ImageSearchResult.fromJson(imageJsons);
+    return imageArticleObj.imagesResults;
+  }
 
-  var imageSearchResultObj = ImageSearchResult.fromJson(jsonObj);
-  var imageResult = imageSearchResultObj.imagesResults;
-
-  return imageResult;
+  return <ImagesResult>[];
 }

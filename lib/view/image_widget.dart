@@ -1,7 +1,6 @@
 import 'package:api_image_picker/model/image_model.dart';
-import 'package:api_image_picker/service/service.dart';
-import 'package:easy_search_bar/easy_search_bar.dart';
 import 'package:flutter/material.dart';
+import '../service/service.dart';
 
 class ImageWidget extends StatefulWidget {
   const ImageWidget({Key? key, this.image}) : super(key: key);
@@ -13,29 +12,62 @@ class ImageWidget extends StatefulWidget {
 
 class HomePageState extends State<ImageWidget> {
   List<ImagesResult> originalList = <ImagesResult>[];
+  var isLoading = false;
   String? selectedImage;
+
+  TextEditingController imageController = TextEditingController();
 
   var searchImage = '';
 
   @override
   void initState() {
+    if (widget.image != null) {
+      imageController.text = widget.image!.thumbnail!;
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: EasySearchBar(
-        title: const Text('To Pick the image'),
-        suggestionTextStyle:
-            const TextStyle(fontWeight: FontWeight.normal, fontSize: 20),
-        suggestions: const ['apple', 'orange', 'graphs'],
-        onSearch: (value) async {
-          searchImage = value;
+      appBar: AppBar(
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+                onPressed: () async {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  setState(() {
+                    isLoading = true;
+                  });
 
-          setState(() {});
-        },
-      ),
+                  try {
+                    // Api call
+                    var result =
+                        await getImageSearchResult(imageController.text);
+                    setState(() {
+                      originalList.clear();
+                      originalList.addAll(result);
+                    });
+                  } catch (err) {
+                    debugPrint(err.toString());
+                  } finally {
+                    setState(() {
+                      isLoading = false;
+                    });
+                  }
+                },
+                icon: const Icon(Icons.arrow_forward))
+          ],
+          title: TextField(
+            keyboardType: TextInputType.text,
+            controller: imageController,
+            decoration: const InputDecoration(
+                icon: Icon(
+                  Icons.search,
+                  color: Colors.white,
+                ),
+                hintText: 'Search'),
+          )),
       body: getBody(),
       persistentFooterButtons: [
         Row(
@@ -60,22 +92,17 @@ class HomePageState extends State<ImageWidget> {
   }
 
   Widget getBody() {
-    return FutureBuilder(
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return GridView.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 5.0,
-              crossAxisSpacing: 10.0,
-              children: getImageWidgets(snapshot.data!),
-            );
-          }
-
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-        future: readJson());
+    if (isLoading == true) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return GridView.count(
+      crossAxisCount: 2,
+      mainAxisSpacing: 5.0,
+      crossAxisSpacing: 10.0,
+      children: getImageWidgets(originalList),
+    );
   }
 
   List<Widget> getImageWidgets(List<ImagesResult> images) {
